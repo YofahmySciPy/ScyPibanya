@@ -14,7 +14,7 @@ jobs:
 
       - name: Validate commit messages
         run: |
-          PATTERN='^\[(feature|tests|refactor|fix)\]: .+'
+          PATTERN='^(feature|tests|refactor|fix): .+'
           FAILED=false
 
           git log --format="%s" origin/${{ github.base_ref }}..HEAD | while IFS= read -r msg; do
