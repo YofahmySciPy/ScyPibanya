@@ -1,0 +1,32 @@
+name: Check Branch Target
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check merge target rules
+        run: |
+          SOURCE="${{ github.head_ref }}"
+          TARGET="${{ github.base_ref }}"
+
+          echo "Source branch: $SOURCE"
+          echo "Target branch: $TARGET"
+
+          # Only develop is allowed to merge into main
+          if [ "$TARGET" = "main" ] && [ "$SOURCE" != "develop" ]; then
+            echo "❌ Only 'develop' can be merged into 'main'!"
+            echo "   Your branch '$SOURCE' must be merged into 'develop' first."
+            exit 1
+          fi
+
+          # No one can merge directly into develop from main
+          if [ "$TARGET" = "develop" ] && [ "$SOURCE" = "main" ]; then
+            echo "❌ Cannot merge 'main' directly into 'develop'!"
+            exit 1
+          fi
+
+          echo "✅ Branch target is valid."
