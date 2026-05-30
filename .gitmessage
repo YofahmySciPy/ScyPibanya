@@ -1,0 +1,7 @@
+[feature|tests|refactor|fix]:
+
+# Available types:
+# [feature]  – new feature
+# [tests]    – new tests
+# [refactor] – code refactored
+# [fix]      – bug fix

@@ -1,0 +1,32 @@
+name: Check Commit Messages
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          PATTERN='^\[(feature|tests|refactor|fix)\]: .+'
+          FAILED=false
+
+          git log --format="%s" origin/${{ github.base_ref }}..HEAD | while IFS= read -r msg; do
+            if ! echo "$msg" | grep -qE "$PATTERN"; then
+              echo "❌ Invalid commit message: '$msg'"
+              echo "   Expected: [feature|tests|refactor|fix]: description"
+              FAILED=true
+            else
+              echo "✅ OK: '$msg'"
+            fi
+          done
+
+          if [ "$FAILED" = true ]; then
+            exit 1
+          fi
