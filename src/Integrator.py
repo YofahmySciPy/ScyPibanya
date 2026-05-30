@@ -5,11 +5,10 @@ class Integrator(ABC):
     def step(self, bodies, dt):
         pass
 
-    """
+
     @abstractmethod
     def calculate_acceleration(self, bodies):
         pass
-    """
 
 class  Verlet(Integrator):
     def step(self, bodies, dt):
@@ -35,3 +34,18 @@ class  Verlet(Integrator):
         bodies.prev_pos = temp_pos
 
         pass
+
+class Euler(Integrator):
+
+    def step(self, bodies, dt):
+        temp_pos = bodies.pos.copy()
+        temp_vel = bodies.vel.copy()
+        temp_acc = 0
+
+        bodies.vel += temp_acc
+        bodies.pos += temp_vel
+
+
+
+        pass
+
