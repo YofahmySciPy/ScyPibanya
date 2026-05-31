@@ -9,7 +9,8 @@ class Body:
     radius: float
     position: np.ndarray
     velocity: np.ndarray
-    previous: np.ndarray
+    position_previous: np.ndarray
+    acceleration: np.ndarray
 
 
     def __init__(self, name, mass, radius, position, velocity):
@@ -34,7 +35,8 @@ class Body:
             raise ValueError(f"velocity must have 3 values [vx, vy, vz], got {velocity}")
 
 
-        self.previous = None
+        self.position_previous = None
+        self.acceleration = np.array([0.0, 0.0, 0.0])
 
 
 
@@ -42,7 +44,10 @@ class Body:
         return 2.0 * self.radius
 
     def distance_to(self, other_body):
-        return np.linalg.norm(self.position - other_body.position)
+        return np.linalg.norm(other_body.position - self.position)
+
+    def distance_vector_to(self, other_body):
+       return other_body.position - self.position
 
     def is_touching(self, other_body):
         return self.distance_to(other_body) <= self.radius + other_body.radius
