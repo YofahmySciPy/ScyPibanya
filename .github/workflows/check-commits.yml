@@ -17,15 +17,15 @@ jobs:
           PATTERN='^(feature|tests|refactor|fix): .+'
           FAILED=false
 
-          git log --format="%s" origin/${{ github.base_ref }}..HEAD | while IFS= read -r msg; do
+          while IFS= read -r msg; do
             if ! echo "$msg" | grep -qE "$PATTERN"; then
               echo "❌ Invalid commit message: '$msg'"
-              echo "   Expected: [feature|tests|refactor|fix]: description"
+              echo "   Expected: feature|tests|refactor|fix: description"
               FAILED=true
             else
               echo "✅ OK: '$msg'"
             fi
-          done
+          done < <(git log --format="%s" origin/${{ github.base_ref }}..HEAD)
 
           if [ "$FAILED" = true ]; then
             exit 1
