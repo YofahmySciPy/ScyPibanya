@@ -1,4 +1,7 @@
+import numpy as np
 from abc import ABC, abstractmethod
+
+G = 0
 
 class Integrator(ABC):
     @abstractmethod
@@ -8,6 +11,33 @@ class Integrator(ABC):
 
     @abstractmethod
     def calculate_acceleration(self, bodies):
+        for i in bodies:
+            bodies.acc = 0
+
+        for i in range(len(bodies)):
+            for j in range(len(bodies)):
+                if i != j:
+
+                    p1 = bodies.pos[i]
+                    p2 = bodies.pos[j]
+
+
+
+                    direction = p2.pos - p1.pos
+                    r = np.sqrt(np.dot(direction, direction))
+
+                    if r > 1e-12:
+                        direction_norm = direction / r
+
+                        F = G * p1.mass * p2.mass / r**2
+
+                        a = F / p1.mass
+
+                        p1.acc += a * direction_norm
+
+
+
+                    pass
         pass
 
 class  Verlet(Integrator):
@@ -35,10 +65,14 @@ class  Verlet(Integrator):
 
         pass
 
+
+    def calculate_acceleration(self, bodies):
+        pass
+
 class Euler(Integrator):
 
     def step(self, bodies, dt):
-        temp_pos = bodies.pos.copy()
+        #temp_pos = bodies.pos.copy()
         temp_vel = bodies.vel.copy()
         temp_acc = 0
 
@@ -49,3 +83,5 @@ class Euler(Integrator):
 
         pass
 
+    def calculate_acceleration(self, bodies):
+        pass
