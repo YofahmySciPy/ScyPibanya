@@ -25,8 +25,7 @@ jobs:
             else
               echo "✅ OK: '$msg'"
             fi
-          done < <(git log --format="%s" origin/${{ github.base_ref }}..HEAD)
-
+          done < <(git log --no-merges --format="%s" origin/${{ github.base_ref }}..HEAD)
           if [ "$FAILED" = true ]; then
             exit 1
           fi
