@@ -44,10 +44,10 @@ class  Verlet(Integrator):
 
         # mini-Euler step to set the previous position
         # TODO: ----TEST----
-        for i in bodies:
-            bodies[i].position_previous = bodies[i].position.copy()
-            bodies[i].velocity += bodies[i].acceleration * dt * dt * 0.0001 * 0.0001
-            bodies[i].position += bodies[i].velocity * dt * 0.0001
+        for body in bodies:
+            body.position_previous = body.position.copy()
+            body.velocity += body.acceleration * dt
+            body.position += body.velocity * dt
 
         # TODO: ----TEST----
         for i in range(len(bodies)):
