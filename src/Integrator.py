@@ -1,7 +1,9 @@
 import numpy as np
 from abc import ABC, abstractmethod
+from Constants import G
+from Body import Body
 
-G = 0
+
 
 class Integrator(ABC):
     @abstractmethod
@@ -9,36 +11,35 @@ class Integrator(ABC):
         pass
 
 
-    @abstractmethod
     def calculate_acceleration(self, bodies):
         for i in bodies:
-            bodies.acc = 0
-
+            i.acceleration = np.zeros(3)
+        print(f"bodies: {len(bodies)}")
         for i in range(len(bodies)):
-            for j in range(len(bodies)):
+            for j in range(i + 1, len(bodies)):
                 if i != j:
 
-                    p1 = bodies.pos[i]
-                    p2 = bodies.pos[j]
-
-
-
-                    direction = p2.pos - p1.pos
-                    r = np.sqrt(np.dot(direction, direction))
-
+                    p1 = bodies[i]
+                    p2 = bodies[j]
+                    direction = Body.distance_vector_to(p1,p2)
+                    r = np.linalg.norm(direction)
+                    print(f"i={i}, j={j}, r={r}")
                     if r > 1e-12:
                         direction_norm = direction / r
 
                         F = G * p1.mass * p2.mass / r**2
+                        print(f"i={i}, j={j}, direction={direction}, r={r}, F={F}")
 
-                        a = F / p1.mass
+                        a1 = F / p1.mass
+                        a2 = F / p2.mass
 
-                        p1.acc += a * direction_norm
+                        bodies[i].acceleration += a1 * direction_norm
+                        bodies[j].acceleration -= a2 * direction_norm
 
 
 
-                    pass
-        pass
+
+
 
 class  Verlet(Integrator):
     def step(self, bodies, dt):
@@ -57,17 +58,14 @@ class  Verlet(Integrator):
 
             return time
         """
-        prev_pos = bodies.prev_pos.copy()
-        temp_pos = bodies.pos.copy()
+        prev_pos = bodies.position_previous.copy()
+        temp_pos = bodies.position.copy()
 
-        bodies.pos = bodies.pos * 2 - prev_pos + bodies.acc.copy() * dt * dt
-        bodies.prev_pos = temp_pos
-
-        pass
+        bodies.position = bodies.position * 2 - prev_pos + bodies.acceleration.copy() * dt * dt
+        bodies.position_previous = temp_pos
 
 
-    def calculate_acceleration(self, bodies):
-        pass
+
 
 class Euler(Integrator):
 
