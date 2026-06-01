@@ -14,27 +14,23 @@ class Integrator(ABC):
     def calculate_acceleration(self, bodies):
         for i in bodies:
             i.acceleration = np.zeros(3)
-        print(f"bodies: {len(bodies)}")
         for i in range(len(bodies)):
             for j in range(i + 1, len(bodies)):
-                if i != j:
 
-                    p1 = bodies[i]
-                    p2 = bodies[j]
-                    direction = Body.distance_vector_to(p1,p2)
-                    r = np.linalg.norm(direction)
-                    print(f"i={i}, j={j}, r={r}")
-                    if r > 1e-12:
-                        direction_norm = direction / r
+                p1 = bodies[i]
+                p2 = bodies[j]
+                direction = Body.distance_vector_to(p1,p2)
+                r = np.linalg.norm(direction)
+                if r > 1e-12:
+                    direction_norm = direction / r
 
-                        F = G * p1.mass * p2.mass / r**2
-                        print(f"i={i}, j={j}, direction={direction}, r={r}, F={F}")
+                    F = G * p1.mass * p2.mass / r**2
 
-                        a1 = F / p1.mass
-                        a2 = F / p2.mass
+                    a1 = F / p1.mass
+                    a2 = F / p2.mass
 
-                        bodies[i].acceleration += a1 * direction_norm
-                        bodies[j].acceleration -= a2 * direction_norm
+                    bodies[i].acceleration += a1 * direction_norm
+                    bodies[j].acceleration -= a2 * direction_norm
 
 
 
@@ -43,26 +39,24 @@ class Integrator(ABC):
 
 class  Verlet(Integrator):
     def step(self, bodies, dt):
-        """
-        REFERENCE CODE, DOES NOT WORK(https://www.algorithm-archive.org/contents/verlet_integration/verlet_integration.html):
-            function verlet(pos::Float64, acc::Float64, dt::Float64)
-            prev_pos = pos
-            time = 0.0
 
-            while (pos > 0)
-                time += dt
-                temp_pos = pos
-                pos = pos * 2 - prev_pos + acc * dt * dt
-                prev_pos = temp_pos
-            end
+        Integrator.calculate_acceleration(self, bodies)
 
-            return time
-        """
-        prev_pos = bodies.position_previous.copy()
-        temp_pos = bodies.position.copy()
+        # mini-Euler step to set the previous position
+        # TODO: ----TEST----
+        for i in bodies:
+            bodies[i].position_previous = bodies[i].position.copy()
+            bodies[i].velocity += bodies[i].acceleration * dt * dt * 0.0001 * 0.0001
+            bodies[i].position += bodies[i].velocity * dt * 0.0001
 
-        bodies.position = bodies.position * 2 - prev_pos + bodies.acceleration.copy() * dt * dt
-        bodies.position_previous = temp_pos
+        # TODO: ----TEST----
+        for i in range(len(bodies)):
+            prev_pos = bodies[i].position_previous.copy()
+            temp_pos = bodies[i].position.copy()
+
+            # TODO: add formula to readme
+            bodies[i].position = bodies[i].position * 2 - prev_pos + bodies[i].acceleration.copy() * dt * dt
+            bodies[i].position_previous = temp_pos
 
 
 
