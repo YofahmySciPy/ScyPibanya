@@ -201,16 +201,104 @@ class TestVerletIntegrator(unittest.TestCase):
 
 
 class TestEulerIntegrator(unittest.TestCase):
-    def setup(self):
+    def setUp(self):
         # create a simple two-body system for testing
         bodies = [
             Body("Body1", mass=1.0, radius=0.5, position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0]),
-            Body("Body2", mass=2.0, radius=1.0, position=[1.0, 1.0, 0.0], velocity=[0.0, 0.0, 0.0])
+            Body("Body2", mass=2.0, radius=1.0, position=[3.0, 4.0, 0.0], velocity=[0.0, 0.0, 0.0])
         ]
         self.bodies = bodies
+
+
+    def test_step_moves_bodies_towards_each_other(self):
+        euler = Integrator.Euler()
+        for _ in range(100):
+            euler.step(self.bodies[:2], dt=1.0)
+        # Körper sollten sich angenähert haben (Anziehung wirkt)
+        self.assertLess(
+            # Abstand verkleinert sich
+            np.linalg.norm(self.bodies[1].position - self.bodies[0].position),
+            np.linalg.norm([3.0, 4.0, 0.0])
+        )
+
+    def test_step_does_not_move_single_body(self):
+        euler = Integrator.Euler()
+        euler.step(self.bodies[:1], dt=1.0)
+        # ohne andere Körper keine Kraft also auch keine bewegung
+        np.testing.assert_array_equal(self.bodies[0].position, [0.0, 0.0, 0.0])
+
+    def test_step_with_empty_bodies_raises_no_error(self):
+        euler = Integrator.Euler()
+        # sollte nicht crashen
+        euler.step([], dt=1.0)
+
+    def test_velocity_updates_with_acceleration(self):
+        euler = Integrator.Euler()
+        euler.step(self.bodies[:2], dt=1.0)
+        # Körper waren in Ruhe also muss nach einem Schritt Geschwindigkeit != 0 sein
+        self.assertGreater(np.linalg.norm(self.bodies[0].velocity), 0.0)
+
+    def test_momentum_is_conserved_over_multiple_steps(self):
+        euler = Integrator.Euler()
+
+        def total_momentum(bodies):
+            return sum((b.mass * b.velocity for b in bodies), start=np.zeros(3))
+
+        p_before = total_momentum(self.bodies[:2])
+        for _ in range(100):
+            euler.step(self.bodies[:2], dt=1.0)
+        p_after = total_momentum(self.bodies[:2])
+
+        np.testing.assert_allclose(p_after, p_before, atol=1e-6)
+
+    def test_energy_drifts_over_many_steps(self):
+    # Kernaussage über expliziten Euler: er ist NICHT energieerhaltend.
+    # Auf einer Kreisbahn spiralt er messbar nach außen.
+        euler = Integrator.Euler()
+        earth = Body("Earth", mass=1e30, radius=6.371e6,
+                     position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
+        r = 3.844e8
+        v = np.sqrt(G * earth.mass / r)
+        moon = Body("Moon", mass=7.348e22, radius=1.737e6,
+                    position=[r, 0.0, 0.0], velocity=[0.0, v, 0.0])
+        bodies = [earth, moon]
+
+        T = 2 * np.pi * np.sqrt(r**3 / (G * earth.mass))
+        steps = 1000
+        dt = T / steps
+
+        r_start = np.linalg.norm(moon.position - earth.position)
+        for _ in range(steps):
+            euler.step(bodies, dt=dt)
+        r_end = np.linalg.norm(moon.position - earth.position)
+
+        # Bahn spiralt nach außen also Endradius größer als Startradius
+        self.assertGreater(r_end, r_start)
+
+class TestVerletVsEuler(unittest.TestCase):
+    def setUp(self):
         pass
 
-    pass
+    def test_euler_drifts_more_than_verlet(self):
+    # gleiche Kreisbahn, gleiches dt also bleibt Verlet näher am Sollradius
+        def run(integrator):
+            earth = Body("Earth", mass=1e30, radius=6.371e6,
+                         position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
+            r = 3.844e8
+            v = np.sqrt(G * earth.mass / r)
+            moon = Body("Moon", mass=7.348e22, radius=1.737e6,
+                        position=[r, 0.0, 0.0], velocity=[0.0, v, 0.0])
+            bodies = [earth, moon]
+            T = 2 * np.pi * np.sqrt(r**3 / (G * earth.mass))
+            steps = 1000
+            dt = T / steps
+            for _ in range(steps):
+                integrator.step(bodies, dt=dt)
+            return abs(np.linalg.norm(moon.position - earth.position) - r)
+
+        error_euler = run(Integrator.Euler())
+        error_verlet = run(Integrator.Verlet())
+        self.assertGreater(error_euler, error_verlet)
 
 
 

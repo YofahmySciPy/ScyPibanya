@@ -61,7 +61,6 @@ class  Verlet(Integrator):
             prev_pos = bodies[i].position_previous.copy()
             temp_pos = bodies[i].position.copy()
 
-            # TODO: add formula to readme
             bodies[i].position = bodies[i].position * 2 - prev_pos + bodies[i].acceleration.copy() * dt * dt
             bodies[i].position_previous = temp_pos
 
@@ -71,16 +70,11 @@ class  Verlet(Integrator):
 class Euler(Integrator):
 
     def step(self, bodies, dt):
-        #temp_pos = bodies.pos.copy()
-        temp_vel = bodies.vel.copy()
-        temp_acc = 0
+        # explicit euler with big errors
+        Integrator.calculate_acceleration(self, bodies)
 
-        bodies.vel += temp_acc
-        bodies.pos += temp_vel
+        for body in bodies:
+            temp_vel = body.velocity.copy()
 
-
-
-        pass
-
-    def calculate_acceleration(self, bodies):
-        pass
+            body.velocity += body.acceleration * dt
+            body.position += temp_vel * dt
