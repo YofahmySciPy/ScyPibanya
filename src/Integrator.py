@@ -32,6 +32,15 @@ class Integrator(ABC):
                     bodies[i].acceleration += a1 * direction_norm
                     bodies[j].acceleration -= a2 * direction_norm
 
+    def potential_energy(self, bodies):
+        E_pot = 0.0
+        for i in range(len(bodies)):
+            for j in range(i + 1, len(bodies)):
+                r = np.linalg.norm(bodies[j].position - bodies[i].position)
+                if r > 1e-12:
+                    E_pot += -G * bodies[i].mass * bodies[j].mass / r
+        return E_pot
+
 
 
 
@@ -42,14 +51,12 @@ class  Verlet(Integrator):
 
         Integrator.calculate_acceleration(self, bodies)
 
-        # mini-Euler step to set the previous position
-        # TODO: ----TEST----
+        # Mini-Euler nur beim allerersten Schritt:
+        # setzt position_previous rückwärts, ohne position zu bewegen
         for body in bodies:
-            body.position_previous = body.position.copy()
-            body.velocity += body.acceleration * dt
-            body.position += body.velocity * dt
+            if body.position_previous is None:
+                body.position_previous = body.position - body.velocity * dt
 
-        # TODO: ----TEST----
         for i in range(len(bodies)):
             prev_pos = bodies[i].position_previous.copy()
             temp_pos = bodies[i].position.copy()

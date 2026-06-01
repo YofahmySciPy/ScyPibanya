@@ -86,31 +86,115 @@ class TestVerletIntegrator(unittest.TestCase):
 
     def test_multiple_steps_decrease_distance(self):
         for i in range(1, 100):
-            Integrator.Verlet().calculate_acceleration(self.bodies[:2])
             Integrator.Verlet().step(self.bodies[:2], 3600.0)
             print(self.bodies[0].distance_to(self.bodies[1]))
         # after 100 steps, the bodies should have moved significantly towards each other
 
 
     def test_energy_is_conserved_over_multiple_steps(self):
-        # this is a very rough test, since Verlet is not perfectly energy-conserving, but the total energy should not change drastically over a few steps
-        pass
+        verlet = Integrator.Verlet()
+
+        E_kin_before = sum(b.kinetic_energy() for b in self.bodies[:2])
+        E_pot_before = verlet.potential_energy(self.bodies[:2])
+        E_total_before = E_kin_before + E_pot_before
+
+        for i in range(1, 100):
+            verlet.step(self.bodies[:2], dt=1.0)
+
+        E_kin_after = sum(b.kinetic_energy() for b in self.bodies[:2])
+        E_pot_after = verlet.potential_energy(self.bodies[:2])
+        E_total_after = E_kin_after + E_pot_after
+        print(E_total_before, E_total_after)
+
+        relative_change = abs(E_total_after - E_total_before) / abs(E_total_before)
+        self.assertLess(relative_change, 0.01)
+
+
 
     def test_momentum_is_conserved_over_multiple_steps(self):
-        # 
-        pass
+        verlet = Integrator.Verlet()
+
+        def total_momentum(bodies):
+            return sum((b.mass * b.velocity for b in bodies), start=np.zeros(3))
+
+        p_before = total_momentum(self.bodies[:2])
+
+        for _ in range(100):
+            verlet.step(self.bodies[:2], dt=1.0)
+
+        p_after = total_momentum(self.bodies[:2])
+
+        np.testing.assert_allclose(p_after, p_before, rtol=1e-6)
 
     def test_time_reversal_returns_to_initial_position(self):
-        # if we run the simulation forward for a few steps, and then reverse the velocities and run it backward for the same number of steps, we should end up back at the initial positions (within numerical precision limits)
-        pass
+        verlet = Integrator.Verlet()
+        start_positions = [b.position.copy() for b in self.bodies[:2]]
+
+        for _ in range(50):
+            verlet.step(self.bodies[:2], dt=1.0)
+
+        for b in self.bodies[:2]:
+            b.velocity = -b.velocity
+            b.position_previous = None  # erzwingt neuen Euler-Init in umgekehrte Richtung
+
+        for _ in range(50):
+            verlet.step(self.bodies[:2], dt=1.0)
+
+        for b, start in zip(self.bodies[:2], start_positions):
+            print(b.position, start)
+            np.testing.assert_allclose(b.position, start, atol=1e-3)
 
     def test_circular_orbit_returns_to_starting_position(self):
-        # if we set up a circular orbit and run the simulation for one full orbital period, we should end up back at the starting position (within numerical precision limits)
-        pass
+        verlet = Integrator.Verlet()
+        # ACHTUNG: Masse der Erde ist hier künstlich erhöht um sie zu fixieren. Somit kann die reine berechnung der Kreisbahn
+        # getestet werden. In Wahrheit ist der Orbit keine Kreisbahn, ist aber auch schwerer zu testen
+        earth = Body("Earth", mass=5.972e30, radius=6.371e6,
+                     position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
+        r = 3.844e8  # Mondabstand
+        v = np.sqrt(G * earth.mass / r)  # Kreisbahngeschwindigkeit
+        moon = Body("Moon", mass=7.348e22, radius=1.737e6,
+                    position=[r, 0.0, 0.0], velocity=[0.0, v, 0.0])
+        bodies = [earth, moon]
+
+        start = moon.position.copy()
+        T = 2 * np.pi * np.sqrt(r**3 / (G * earth.mass))  # Umlaufzeit
+        steps = 10000
+        dt = T / steps
+
+        for _ in range(steps):
+            verlet.step(bodies, dt=dt)
+
+        np.testing.assert_allclose(moon.position, start, atol=r*0.05)
 
     def test_smaller_dt_is_more_accurate(self):
-        # if we run the simulation with a smaller time step, we should get a result that is closer to the expected analytical solution (for example, for a circular orbit, the radius should remain more constant)
-        pass
+        def run(steps, total_time):
+            # Hier wurde die Masse der Erde wieder künstlich erhöht
+            earth = Body("Earth", mass=5.972e30, radius=6.371e6,
+                         position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
+            r = 3.844e8
+            v = np.sqrt(G * earth.mass / r)
+            moon = Body("Moon", mass=7.348e22, radius=1.737e6,
+                        position=[r, 0.0, 0.0], velocity=[0.0, v, 0.0])
+            bodies = [earth, moon]
+            verlet = Integrator.Verlet()
+            dt = total_time / steps
+            for _ in range(steps):
+                verlet.step(bodies, dt=dt)
+            return moon.position.copy()
+
+        r = 3.844e8
+        # Hier wurde die Masse der Erde wieder künstlich erhöht
+        earth_mass = 5.972e30
+        T = 2 * np.pi * np.sqrt(r**3 / (G * earth_mass))
+        start = np.array([r, 0.0, 0.0])
+
+        coarse = run(100, T)
+        fine = run(10000, T)
+
+        error_coarse = np.linalg.norm(coarse - start)
+        error_fine = np.linalg.norm(fine - start)
+
+        self.assertLess(error_fine, error_coarse)
 
 
 
