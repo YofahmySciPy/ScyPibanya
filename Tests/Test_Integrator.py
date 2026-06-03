@@ -151,14 +151,14 @@ class TestVerletIntegrator(unittest.TestCase):
         # In reality, the orbit isn't a circle, but this would be hard to test.
         earth = Body("Earth", mass=5.972e30, radius=6.371e6,
                      position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
-        r = 3.844e8  # Mondabstand
-        v = np.sqrt(G * earth.mass / r)  # Kreisbahngeschwindigkeit
+        r = 3.844e8  # distance from earth to moon
+        v = np.sqrt(G * earth.mass / r)  # circular path velocity
         moon = Body("Moon", mass=7.348e22, radius=1.737e6,
                     position=[r, 0.0, 0.0], velocity=[0.0, v, 0.0])
         bodies = [earth, moon]
 
         start = moon.position.copy()
-        T = 2 * np.pi * np.sqrt(r**3 / (G * earth.mass))  # Umlaufzeit
+        T = 2 * np.pi * np.sqrt(r**3 / (G * earth.mass))
         steps = 10000
         dt = T / steps
 
@@ -254,7 +254,7 @@ class TestEulerIntegrator(unittest.TestCase):
 
     def test_energy_drifts_over_many_steps(self):
     # Quintessential about explicit Euler: he is NOT conserving energy.
-    # OHe is spiraling outwards on a small circular orbit.
+    # He is spiraling outwards on a small circular orbit.
         euler = Integrator.Euler()
         earth = Body("Earth", mass=1e30, radius=6.371e6,
                      position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
