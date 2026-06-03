@@ -124,7 +124,7 @@ class TestVerletIntegrator(unittest.TestCase):
 
         p_after = total_momentum(self.bodies[:2])
 
-        np.testing.assert_allclose(p_after, p_before, rtol=1e-6)
+        np.testing.assert_allclose(p_after, p_before, atol=1e-9)
 
     def test_time_reversal_returns_to_initial_position(self):
         verlet = Integrator.Verlet()
