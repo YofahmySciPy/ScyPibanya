@@ -45,14 +45,13 @@ class Integrator(ABC):
 
 
 
-
 class  Verlet(Integrator):
     def step(self, bodies, dt):
 
         Integrator.calculate_acceleration(self, bodies)
 
-        # Mini-Euler nur beim allerersten Schritt:
-        # setzt position_previous rückwärts, ohne position zu bewegen
+        # Mini-Euler only at the first step:
+        # sets position_previous backwards, without moving the position
         for body in bodies:
             if body.position_previous is None:
                 body.position_previous = body.position - body.velocity * dt
@@ -63,6 +62,9 @@ class  Verlet(Integrator):
 
             bodies[i].position = bodies[i].position * 2 - prev_pos + bodies[i].acceleration.copy() * dt * dt
             bodies[i].position_previous = temp_pos
+
+            # Calculate velocity implicitly from position change
+            bodies[i].velocity = (bodies[i].position.copy() - prev_pos) / (2.0 * dt)
 
 
 

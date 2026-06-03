@@ -135,7 +135,7 @@ class TestVerletIntegrator(unittest.TestCase):
 
         for b in self.bodies[:2]:
             b.velocity = -b.velocity
-            b.position_previous = None  # erzwingt neuen Euler-Init in umgekehrte Richtung
+            b.position_previous = None  # forces new Euler-Init in opposite direction
 
         for _ in range(50):
             verlet.step(self.bodies[:2], dt=1.0)
@@ -146,8 +146,9 @@ class TestVerletIntegrator(unittest.TestCase):
 
     def test_circular_orbit_returns_to_starting_position(self):
         verlet = Integrator.Verlet()
-        # ACHTUNG: Masse der Erde ist hier künstlich erhöht um sie zu fixieren. Somit kann die reine berechnung der Kreisbahn
-        # getestet werden. In Wahrheit ist der Orbit keine Kreisbahn, ist aber auch schwerer zu testen
+        # ATTENTION: Mass of earth is being raised synthetically to fixate it. This was,
+        # the sole calculation of the circular path can be tested.
+        # In reality, the orbit isn't a circle, but this would be hard to test.
         earth = Body("Earth", mass=5.972e30, radius=6.371e6,
                      position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
         r = 3.844e8  # Mondabstand
@@ -168,7 +169,7 @@ class TestVerletIntegrator(unittest.TestCase):
 
     def test_smaller_dt_is_more_accurate(self):
         def run(steps, total_time):
-            # Hier wurde die Masse der Erde wieder künstlich erhöht
+            # The mass of the earth got raised synthetically here
             earth = Body("Earth", mass=5.972e30, radius=6.371e6,
                          position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
             r = 3.844e8
@@ -183,7 +184,7 @@ class TestVerletIntegrator(unittest.TestCase):
             return moon.position.copy()
 
         r = 3.844e8
-        # Hier wurde die Masse der Erde wieder künstlich erhöht
+        # The mass of the earth got raised synthetically here again
         earth_mass = 5.972e30
         T = 2 * np.pi * np.sqrt(r**3 / (G * earth_mass))
         start = np.array([r, 0.0, 0.0])
@@ -214,9 +215,9 @@ class TestEulerIntegrator(unittest.TestCase):
         euler = Integrator.Euler()
         for _ in range(100):
             euler.step(self.bodies[:2], dt=1.0)
-        # Körper sollten sich angenähert haben (Anziehung wirkt)
+        # Bodies should attract each other
         self.assertLess(
-            # Abstand verkleinert sich
+            # Distance gets smaller
             np.linalg.norm(self.bodies[1].position - self.bodies[0].position),
             np.linalg.norm([3.0, 4.0, 0.0])
         )
@@ -224,18 +225,18 @@ class TestEulerIntegrator(unittest.TestCase):
     def test_step_does_not_move_single_body(self):
         euler = Integrator.Euler()
         euler.step(self.bodies[:1], dt=1.0)
-        # ohne andere Körper keine Kraft also auch keine bewegung
+        # without other bodies there are no forces so no movement
         np.testing.assert_array_equal(self.bodies[0].position, [0.0, 0.0, 0.0])
 
     def test_step_with_empty_bodies_raises_no_error(self):
         euler = Integrator.Euler()
-        # sollte nicht crashen
+        # should not crash
         euler.step([], dt=1.0)
 
     def test_velocity_updates_with_acceleration(self):
         euler = Integrator.Euler()
         euler.step(self.bodies[:2], dt=1.0)
-        # Körper waren in Ruhe also muss nach einem Schritt Geschwindigkeit != 0 sein
+        # Bodies were at rest so after one step their velocity should not be zero
         self.assertGreater(np.linalg.norm(self.bodies[0].velocity), 0.0)
 
     def test_momentum_is_conserved_over_multiple_steps(self):
@@ -252,8 +253,8 @@ class TestEulerIntegrator(unittest.TestCase):
         np.testing.assert_allclose(p_after, p_before, atol=1e-6)
 
     def test_energy_drifts_over_many_steps(self):
-    # Kernaussage über expliziten Euler: er ist NICHT energieerhaltend.
-    # Auf einer Kreisbahn spiralt er messbar nach außen.
+    # Quintessential about explicit Euler: he is NOT conserving energy.
+    # OHe is spiraling outwards on a small circular orbit.
         euler = Integrator.Euler()
         earth = Body("Earth", mass=1e30, radius=6.371e6,
                      position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
@@ -272,7 +273,7 @@ class TestEulerIntegrator(unittest.TestCase):
             euler.step(bodies, dt=dt)
         r_end = np.linalg.norm(moon.position - earth.position)
 
-        # Bahn spiralt nach außen also Endradius größer als Startradius
+        # Path is spiraling outwards, distance should increase
         self.assertGreater(r_end, r_start)
 
 class TestVerletVsEuler(unittest.TestCase):
@@ -280,7 +281,7 @@ class TestVerletVsEuler(unittest.TestCase):
         pass
 
     def test_euler_drifts_more_than_verlet(self):
-    # gleiche Kreisbahn, gleiches dt also bleibt Verlet näher am Sollradius
+    # same circular orbit, same dt -> Verlet stays closer to the actual distance
         def run(integrator):
             earth = Body("Earth", mass=1e30, radius=6.371e6,
                          position=[0.0, 0.0, 0.0], velocity=[0.0, 0.0, 0.0])
