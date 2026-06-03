@@ -12,3 +12,7 @@ venv/
 .idea/
 .vscode/
 # created by virtualenv automatically
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
