@@ -10,5 +10,5 @@ venv/
 
 # IDE
 .idea/
-.vscode/# created by virtualenv automatically
-*
+.vscode/
+# created by virtualenv automatically
