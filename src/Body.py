@@ -55,5 +55,10 @@ class Body:
     def momentum(self):
         return self.mass * self.velocity
 
+    def kinetic_energy(self):
+        return 0.5 * self.mass * np.linalg.norm(self.velocity)**2
+
+
+
     def __repr__(self):
         return f"Body('{self.name}', mass={self.mass:.3e} kg, position={self.position})"
