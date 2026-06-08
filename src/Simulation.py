@@ -1,4 +1,5 @@
 from Integrator import Verlet, Euler
+from Collisions import Collisions
 
 class Simulation:
 
@@ -12,7 +13,7 @@ class Simulation:
     
     def step(self):
         self.integrator.step(self.bodies, self.dt)
-        # Check here for collisions, when implemented
+        self.bodies = Collisions.handle(self.bodies, self.dt)
         self.t += self.dt
         self._save_snapshot()
 
