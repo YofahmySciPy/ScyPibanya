@@ -1,6 +1,6 @@
 import math
-from .Body import Body
-from . import Constants
+from Body import Body
+import Constants
 
 
 def create_earth_moon():
