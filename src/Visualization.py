@@ -64,9 +64,12 @@ class Visualization:
         self._time_text.set_text(f"t = {timestamps[frame_index]:.2f}")
         return self._circles + [self._time_text]
 
-    def animate(self, history, interval = 20, step = 1):
+    def animate(self, history, interval = 20, step = None):
         timestamps, bodies_at_frame = self.data_adapter(history)
         self._limits = axis_limits(bodies_at_frame)        # nur einmal
+
+        if step is None:
+            step = self.auto_step(len(bodies_at_frame))
 
         fig, ax = plt.subplots()
         artists = self._setup(ax, bodies_at_frame)         # Patches einmal anlegen
@@ -88,3 +91,40 @@ class Visualization:
 
         plt.show()
         return anim
+
+
+
+
+
+
+
+    #subsambling
+    def auto_step(self, n_frames , target_frames=300):
+        return max(1,n_frames // target_frames)
+
+
+    #detect hit
+    def find_hit_frame(self, bodies_at_frame, projectile_name):
+
+        projectile_was_there = False
+
+        for frame_index in range(len(bodies_at_frame)):
+            bodies = bodies_at_frame[frame_index]
+
+            #collect the   names of all bodies in this frame
+            names = []
+            for body in bodies:
+                names.append(body.name)
+
+            if projectile_name in names:
+                projectile_was_there = True
+            elif projectile_was_there:
+                return frame_index
+        return None
+
+
+
+
+
+
+
