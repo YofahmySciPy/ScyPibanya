@@ -1,11 +1,21 @@
 from Integrator import Verlet, Euler
+from Scenarios import create_earth_moon, create_cannon_shot
 from Collisions import Collisions
 
 class Simulation:
 
-    def __init__(self, bodies, config, integrator=None):
+    def __init__(self, cannon, duration, integrator=None, cannon_angle=None, cannonball_speed=None):
+        if cannon:
+            if cannon_angle is None or cannonball_speed is None:
+                raise ValueError("To start the cannon shot, provide the cannon angle and the cannonball speed")
+            bodies, config = create_cannon_shot(cannonball_speed, cannon_angle)
+        else:
+            bodies, config = create_earth_moon()
+
         self.bodies = bodies
         self.dt = config["time_step"]
+        self.duration = duration*24*60*60 # Convert duration from days to seconds
+        self.steps = int(self.duration/self.dt)
         self.integrator = integrator if integrator is not None else Verlet()
         self.t = 0.0
         self.history = []
@@ -24,6 +34,7 @@ class Simulation:
                 {
                 "name": b.name,
                 "mass": b.mass,
+                "radius": b.radius,
                 "position": b.position.copy(),
                 "velocity": b.velocity.copy()
                 }
@@ -32,6 +43,6 @@ class Simulation:
         }
         self.history.append(snapshot)
 
-    def simulate(self, steps):
-        for i in range(steps):
+    def simulate(self):
+        for i in range(self.steps):
             self.step()
