@@ -123,6 +123,23 @@ class Visualization:
         return None
 
 
+    def find_hit_position(self, bodies_at_frame, projectile_name):
+
+        hit_frame =  self.find_hit_frame(bodies_at_frame, projectile_name)
+
+        if hit_frame is None:
+            return None
+
+    # in hit_frame the projectile is already gone, so look one frame earlier
+        last_bodies = bodies_at_frame[hit_frame - 1]
+        for body in last_bodies:
+            if body.name == projectile_name:
+                return (body.position[0], body.position[1])
+        return None
+
+
+
+
 
 
 
