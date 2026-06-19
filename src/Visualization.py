@@ -45,10 +45,17 @@ class Visualization:
             ax.add_patch(c)
             self._circles.append(c)
 
+
+        self._hit_frame = self.find_hit_frame(bodies_at_frame, "Projectile")
+        self._hit_position = self.find_hit_position(bodies_at_frame, "Projectile")
+        self._hit_marker, = ax.plot([], [], marker="X", color="red",
+                                    markersize=12, linestyle="None", animated=True)
+        self._hit_marker.set_visible(False)
+
         self._time_text = ax.text(0.02, 0.98, "", transform=ax.transAxes,
                                   ha="left", va="top", animated=True)
 
-        return self._circles + [self._time_text]
+        return self._circles + [self._time_text,self._hit_marker]
 
     def draw_frame(self, frame_index, timestamps, bodies_at_frame):
         bodies = bodies_at_frame[frame_index]
@@ -62,7 +69,10 @@ class Visualization:
             else:                                          # uebrige Circles ausblenden
                 circle.set_visible(False)
         self._time_text.set_text(f"t = {timestamps[frame_index]:.2f}")
-        return self._circles + [self._time_text]
+
+
+        self.update_hit_marker(frame_index)
+        return self._circles + [self._time_text,self._hit_marker]
 
     def animate(self, history, interval = 20, step = None):
         timestamps, bodies_at_frame = self.data_adapter(history)
@@ -137,6 +147,12 @@ class Visualization:
                 return (body.position[0], body.position[1])
         return None
 
+    def update_hit_marker(self, frame_index):
+
+        if self._hit_frame is not None and frame_index >= self._hit_frame:
+            self._hit_marker.set_data([self._hit_position[0]], [self._hit_position[1]])
+            self._hit_marker.set_visible(True)
+        return self._hit_marker
 
 
 
