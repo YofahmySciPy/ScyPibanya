@@ -13,7 +13,7 @@ from Integrator import Verlet, Euler
 class Test_Simulation_EarthMoon_Verlet(unittest.TestCase):
 
     def setUp(self):
-        self.sim = Simulation(cannon=False, duration=1) # duration input is days, it will be converted to seconds
+        self.sim = Simulation.build_simulation(cannon=False, duration=1) # duration input is days, it will be converted to seconds
 
     def test_init(self):
         self.assertEqual(self.sim.t, 0.0)
@@ -56,7 +56,7 @@ class Test_Simulation_EarthMoon_Verlet(unittest.TestCase):
 class Test_Simulation_Cannon_Euler(unittest.TestCase):
 
     def setUp(self):
-        self.sim = Simulation(cannon=True, duration=1, integrator=Euler(), cannon_angle=0, cannonball_speed=100) # duration input is days, it will be converted to seconds
+        self.sim = Simulation.build_simulation(cannon=True, duration=1, integrator=Euler(), cannon_angle=0, cannonball_speed=100) # duration input is days, it will be converted to seconds
 
     def test_init(self):
         self.assertEqual(self.sim.t, 0.0)
@@ -101,7 +101,7 @@ class Test_Value_Error(unittest.TestCase):
 
     def test_value_error(self):
         with self.assertRaises(ValueError):
-            Simulation(cannon=True, duration=1) # duration input is days, it will be converted to seconds
+            Simulation.build_simulation(cannon=True, duration=1) # duration input is days, it will be converted to seconds
 
 if __name__ == '__main__':
     unittest.main()
