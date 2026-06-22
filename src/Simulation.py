@@ -8,7 +8,7 @@ class Simulation:
         self.bodies = bodies
         self.dt = config["time_step"]
         self.duration = duration*24*60*60 # Convert duration from days to seconds
-        self.steps = int(self.duration/self.dt)
+        self.steps = round(self.duration/self.dt)
         self.integrator = integrator if integrator is not None else Verlet()
         self.t = 0.0
         self.history = []

@@ -56,7 +56,7 @@ class Test_Simulation_EarthMoon_Verlet(unittest.TestCase):
 class Test_Simulation_Cannon_Euler(unittest.TestCase):
 
     def setUp(self):
-        self.sim = Simulation.build_simulation(cannon=True, duration=1, integrator=Euler(), cannon_angle=0, cannonball_speed=100) # duration input is days, it will be converted to seconds
+        self.sim = Simulation.build_simulation(cannon=True, duration=1, integrator=Euler(), cannon_angle=0, cannonball_speed=12000) # duration input is days, it will be converted to seconds
 
     def test_init(self):
         self.assertEqual(self.sim.t, 0.0)
