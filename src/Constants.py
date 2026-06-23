@@ -70,7 +70,8 @@ MINUTE = 60.0 * SECOND
 HOUR   = 60.0 * MINUTE
 DAY    = 24.0 * HOUR             # 86,400 s
 
-DEFAULT_TIME_STEP = 60.0         # default time step [s] = 1 minute per step
+DEFAULT_CANNON_TIME_STEP = MINUTE         # default time step [s] = 1 minute per step
+DEFAULT_EARTH_MOON_TIME_STEP = HOUR
 
 
 # ---------------------------------------------------------------------------
