@@ -1,2 +1,4 @@
 # Project dependencies
 numpy>=1.25
+
+matplotlib
