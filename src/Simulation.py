@@ -15,11 +15,11 @@ class Simulation:
         self._save_snapshot()
 
     @staticmethod
-    def build_simulation(cannon, duration, integrator=None, cannon_angle=None, cannonball_speed=None):
+    def build_simulation(cannon, duration, integrator=None, cannonball_angle=None, cannonball_speed=None):
         if cannon:
-            if cannon_angle is None or cannonball_speed is None:
+            if cannonball_angle is None or cannonball_speed is None:
                 raise ValueError("To start the cannon shot, provide the cannon angle and the cannonball speed")
-            bodies, config = create_cannon_shot(cannonball_speed, cannon_angle)
+            bodies, config = create_cannon_shot(cannonball_speed, cannonball_angle)
         else:
             bodies, config = create_earth_moon()
         return Simulation(bodies, config, duration=duration, integrator=integrator)

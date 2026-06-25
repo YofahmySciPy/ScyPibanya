@@ -15,7 +15,7 @@ def map_integrator(name) :
 
 def run(cannon, integrator_name, duration, angle, speed, size_factor):
     integrator = map_integrator(integrator_name)
-    sim = Simulation.build_simulation(cannon, duration,integrator= integrator,cannon_angle= angle, cannonball_speed= speed)
+    sim = Simulation.build_simulation(cannon, duration,integrator= integrator,cannonball_angle= angle, cannonball_speed= speed)
     sim.simulate()
     viz = Visualization()
     viz.animate(sim.history, size_factor=size_factor)
