@@ -88,10 +88,11 @@ class Visualization:
             if i < n:
                 body = bodies[i]
                 circle.center = (body["position"][0], body["position"][1])
-                circle.set_radius(_scale_radius(body["radius"], mode="sqrt", size_factor=size_factor))
+                min_r = (self._limits[1] - self._limits[0]) * 0.005  # 0.5% of axis-width
+                circle.set_radius(max(min_r, _scale_radius(body["radius"], mode="linear", size_factor=size_factor)))
                 circle.set_visible(True)
             else:
-                # just hide the bodiy instead of deleting it
+                # just hide the body instead of deleting it
                 circle.set_visible(False)
 
         self._time_text.set_text(f"t = {timestamps[frame_index]:.2f}")
