@@ -90,8 +90,8 @@ class Visualization:
                 circle.center = (body["position"][0], body["position"][1])
                 colors = {"Earth": "blue", "Moon": "gray", "Projectile": "black"}
                 circle.set_color(colors.get(body["name"], "blue"))
-                min_r = (self._limits[1] - self._limits[0]) * 0.02  # 2% of axis-width
-                circle.set_radius(max(min_r, _scale_radius(body["radius"], mode="linear", size_factor=size_factor)))
+                min_r = (self._limits[1] - self._limits[0]) * 0.01  # 1% of axis-width
+                circle.set_radius(max(min_r, _scale_radius(body["radius"], mode="sqrt", size_factor=size_factor)))
                 circle.set_visible(True)
             else:
                 # just hide the body instead of deleting it
