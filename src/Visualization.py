@@ -3,8 +3,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from Constants import MOON_START_X
-
 
 def _scale_radius(real_radius, mode, size_factor):
     if mode == "linear":
@@ -17,7 +15,7 @@ def _scale_radius(real_radius, mode, size_factor):
 
 def axis_limits(bodies_at_frame, pad=0.05):
     # only x, y for all frames so we have fixed axis
-    view_limit = 6e8 # roughly 1.5 of the moons radius
+    view_limit = 6e8 # ~1.56x the Earth-Moon distance (keeps Earth+Moon visible)
     all_positions = np.array([body["position"][:2]
                               for frame in bodies_at_frame for body in frame])
     x_min = max(np.min(all_positions[:, 0]), -view_limit)
@@ -158,13 +156,13 @@ class Visualization:
             if not vanished:
                 continue
 
-            appeared = cur_names - prev_names
-            if appeared:
-                pts = [(b["position"][0], b["position"][1])
-                       for b in bodies_at_frame[i] if b["name"] in appeared]
+            vanished_bodies = [b for b in bodies_at_frame[i - 1]
+                               if b["name"] in vanished]
+            if vanished_bodies:
+                smallest = min(vanished_bodies, key=lambda b: b["mass"])
+                pts = [(smallest["position"][0], smallest["position"][1])]
             else:
-                pts = [(b["position"][0], b["position"][1])
-                       for b in bodies_at_frame[i - 1] if b["name"] in vanished]
+                pts = []
 
             x = float(np.mean([p[0] for p in pts]))
             y = float(np.mean([p[1] for p in pts]))
