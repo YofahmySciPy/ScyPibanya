@@ -3,6 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+from Constants import MOON_START_X
+
 
 def _scale_radius(real_radius, mode, size_factor):
     if mode == "linear":
@@ -14,11 +16,14 @@ def _scale_radius(real_radius, mode, size_factor):
 
 
 def axis_limits(bodies_at_frame, pad=0.05):
-    # only x, y for all frames so we have fixed axies
+    # only x, y for all frames so we have fixed axis
+    view_limit = 6e8 # roughly 1.5 of the moons radius
     all_positions = np.array([body["position"][:2]
                               for frame in bodies_at_frame for body in frame])
-    x_min, y_min = np.min(all_positions, axis=0)
-    x_max, y_max = np.max(all_positions, axis=0)
+    x_min = max(np.min(all_positions[:, 0]), -view_limit)
+    x_max = min(np.max(all_positions[:, 0]),  view_limit)
+    y_min = max(np.min(all_positions[:, 1]), -view_limit)
+    y_max = min(np.max(all_positions[:, 1]), view_limit)
 
     span_x = x_max - x_min
     span_y = y_max - y_min
@@ -90,8 +95,8 @@ class Visualization:
                 circle.center = (body["position"][0], body["position"][1])
                 colors = {"Earth": "blue", "Moon": "gray", "Projectile": "black"}
                 circle.set_color(colors.get(body["name"], "blue"))
-                min_r = (self._limits[1] - self._limits[0]) * 0.02  # 2% of axis-width
-                circle.set_radius(max(min_r, _scale_radius(body["radius"], mode="linear", size_factor=size_factor)))
+                min_r = (self._limits[1] - self._limits[0]) * 0.01  # 1% of axis-width
+                circle.set_radius(max(min_r, _scale_radius(body["radius"], mode="sqrt", size_factor=size_factor)))
                 circle.set_visible(True)
             else:
                 # just hide the body instead of deleting it
@@ -102,7 +107,7 @@ class Visualization:
         self.update_hit_marker(frame_index)
         return self._circles + [self._time_text,self._hit_marker]
 
-    def animate(self, history, size_factor = 10000.0, interval = 20, step = None):
+    def animate(self, history, size_factor = 15000.0, interval = 20, step = None):
         timestamps, bodies_at_frame = self.data_adapter(history)
         # set the limits only once
         self._limits = axis_limits(bodies_at_frame)
