@@ -100,7 +100,7 @@ class Visualization:
                 # just hide the body instead of deleting it
                 circle.set_visible(False)
 
-        self._time_text.set_text(f"t = {timestamps[frame_index]:.2f}")
+        self._time_text.set_text(f"t = {timestamps[frame_index]/3600:.2f} h")
 
         self.update_hit_marker(frame_index)
         return self._circles + [self._time_text,self._hit_marker]
