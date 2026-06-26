@@ -1,5 +1,5 @@
 from Integrator import Verlet, Euler
-from Scenarios import create_earth_moon, create_cannon_shot
+from Scenarios import create_earth_moon, create_cannon_shot, create_67
 from Collisions import Collisions
 
 class Simulation:
@@ -20,6 +20,8 @@ class Simulation:
             if cannonball_angle is None or cannonball_speed is None:
                 raise ValueError("To start the cannon shot, provide the cannon angle and the cannonball speed")
             bodies, config = create_cannon_shot(cannonball_speed, cannonball_angle)
+        elif duration == 67:
+            bodies, config = create_67()
         else:
             bodies, config = create_earth_moon()
         return Simulation(bodies, config, duration=duration, integrator=integrator)
