@@ -1,6 +1,7 @@
 import unittest
-from src.Scenarios import create_earth_moon, create_cannon_shot
-from src import Constants
+
+from src.scenarios import create_earth_moon, create_cannon_shot
+from src import constants
 
 
 class TestScenarios(unittest.TestCase):
@@ -28,11 +29,11 @@ class TestScenarios(unittest.TestCase):
         bodies, config = create_earth_moon()
 
         # bodies[1] is the Moon
-        self.assertAlmostEqual(bodies[1].position[0], Constants.MOON_START_X)  # x = earth-moon distance
+        self.assertAlmostEqual(bodies[1].position[0], constants.MOON_START_X)  # x = earth-moon distance
         self.assertEqual(bodies[1].position[1], 0)  # y = 0, moon starts on x axis
 
         self.assertEqual(bodies[1].velocity[0], 0)  # vx = 0, no movement in x
-        self.assertAlmostEqual(bodies[1].velocity[1], Constants.MOON_CIRCULAR_VELOCITY)  # vy = circular velocity
+        self.assertAlmostEqual(bodies[1].velocity[1], constants.MOON_CIRCULAR_VELOCITY)  # vy = circular velocity
 
     def test_cannon_shot_returns_three_bodies(self):
         bodies, config = create_cannon_shot(7000, 0)
@@ -45,7 +46,7 @@ class TestScenarios(unittest.TestCase):
         bodies, config = create_cannon_shot(7000, 0)
 
         # bodies[2] is the projectile
-        self.assertAlmostEqual(bodies[2].position[0], Constants.EARTH_RADIUS)  # x = earth radius
+        self.assertAlmostEqual(bodies[2].position[0], constants.EARTH_RADIUS)  # x = earth radius
         self.assertAlmostEqual(bodies[2].position[1], 0)  # y = 0
 
 

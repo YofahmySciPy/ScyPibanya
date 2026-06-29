@@ -1,6 +1,6 @@
-from Integrator import Verlet, Euler
-from Scenarios import create_earth_moon, create_cannon_shot, create_67
-from Collisions import Collisions
+from collisions import Collisions
+from integrator import Verlet, Euler
+from scenarios import create_earth_moon, create_cannon_shot, create_67
 
 class Simulation:
 
