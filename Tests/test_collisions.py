@@ -17,10 +17,11 @@ HINWEIS: make_body / Body-Konstruktor ggf. an eure echte Body-Klasse anpassen.
 """
 
 import unittest
+
 import numpy as np
 
-from Body import Body
-from Collisions import Collisions
+from body import Body
+from collisions import Collisions
 
 
 DT = 0.01
