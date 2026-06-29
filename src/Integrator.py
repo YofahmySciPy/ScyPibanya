@@ -1,7 +1,9 @@
-import numpy as np
 from abc import ABC, abstractmethod
-from Constants import G
-from Body import Body
+
+import numpy as np
+
+from body import Body
+from constants import G
 
 
 

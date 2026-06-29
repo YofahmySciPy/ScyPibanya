@@ -1,9 +1,10 @@
-from Integrator import Verlet, Euler
-from Simulation import Simulation
-from Visualization import Visualization
-from matplotlib import pyplot as plt
 from IPython.display import HTML, display
 import ipywidgets as widgets
+from matplotlib import pyplot as plt
+
+from integrator import Euler, Verlet
+from simulation import Simulation
+from visualization import Visualization
 
 
 def map_integrator(name):

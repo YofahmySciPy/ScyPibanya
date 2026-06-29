@@ -1,5 +1,6 @@
 import numpy as np
-from Body import Body
+
+from body import Body
 
 
 class Collisions:

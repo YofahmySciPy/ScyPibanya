@@ -1,9 +1,12 @@
 import os
 import sys
 import unittest
+
 import numpy as np
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
-from Body import Body
+
+from body import Body
 
 
 class TestBody(unittest.TestCase):
