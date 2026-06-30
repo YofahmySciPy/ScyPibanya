@@ -114,7 +114,12 @@ class Visualization:
             step = self.auto_step(len(bodies_at_frame))
 
         if self.fig is None:
-            self.fig, self.ax = plt.subplots()
+            x_min, x_max, y_min, y_max = self._limits
+            data_w = x_max - x_min
+            data_h = y_max - y_min
+            fig_w = 10
+            fig_h = max(2.5, min(10, fig_w * data_h / data_w))
+            self.fig, self.ax = plt.subplots(figsize=(fig_w, fig_h))
 
         if self.anim is not None and self.anim.event_source is not None:
             # stops the current running animation
