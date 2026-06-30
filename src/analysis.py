@@ -98,10 +98,10 @@ def _propagate_projectiles(pos0, vel0, earth_xyz, moon_xyz, dt):
     # verlet-steps all projectiles through precomputed Earth-Moon field
     # projectiles freeze on Moon hit or Earth crash
     # returns closest Moon distance and hit status per projectile.
-    GM_earth = Constants.G * Constants.EARTH_MASS
-    GM_moon = Constants.G * Constants.MOON_MASS
-    r_moon_hit = Constants.MOON_RADIUS + Constants.PROJECTILE_RADIUS
-    r_earth_hit = Constants.EARTH_RADIUS + Constants.PROJECTILE_RADIUS
+    GM_earth = constants.G * constants.EARTH_MASS
+    GM_moon = constants.G * constants.MOON_MASS
+    r_moon_hit = constants.MOON_RADIUS + constants.PROJECTILE_RADIUS
+    r_earth_hit = constants.EARTH_RADIUS + constants.PROJECTILE_RADIUS
 
     pos = pos0.astype(float).copy()
     pos_prev = pos - vel0 * dt          # backwards seed, like Verlet's first step with Mini-Euler
@@ -141,12 +141,12 @@ def sweep_fast(speeds, angles, duration=3.5, dt=None):
     speeds = np.asarray(speeds, dtype=float)
     angles = np.asarray(angles, dtype=float)
     if dt is None:
-        dt = Constants.DEFAULT_CANNON_TIME_STEP
+        dt = constants.DEFAULT_CANNON_TIME_STEP
 
     earth_xyz, moon_xyz = _earth_moon_trajectory(duration, dt)
 
     # one projectile per (speed, angle), same launch as create_cannon_shot
-    start_r = Constants.EARTH_RADIUS + Constants.PROJECTILE_RADIUS + 1000.0
+    start_r = constants.EARTH_RADIUS + constants.PROJECTILE_RADIUS + 1000.0
     speed_grid = np.repeat(speeds, len(angles))          # (S*A,)
     angle_grid = np.tile(angles, len(speeds))            # (S*A,)
     angle_rad = np.radians(angle_grid)
@@ -176,7 +176,7 @@ def plot_corridor_heatmap(grid, ax=None):
     speeds_kms = grid["speeds"] / 1000.0
     angles = grid["angles"]
     min_dist = grid["min_dist"].T   # grid is [speed, angle]; transpose -> x=speed, y=angle
-    hit_radius = Constants.MOON_RADIUS + Constants.PROJECTILE_RADIUS
+    hit_radius = constants.MOON_RADIUS + constants.PROJECTILE_RADIUS
 
     if ax is None:
         _, ax = plt.subplots()
@@ -191,7 +191,7 @@ def plot_corridor_heatmap(grid, ax=None):
                    colors="red", linewidths=1.5)
 
     # the wall: below escape velocity nothing gets away from Earth
-    v_esc = Constants.EARTH_ESCAPE_VELOCITY / 1000.0
+    v_esc = constants.EARTH_ESCAPE_VELOCITY / 1000.0
     if speeds_kms.min() <= v_esc <= speeds_kms.max():
         ax.axvline(v_esc, color="white", linestyle="--", linewidth=1)
         ax.text(v_esc, angles.max(), f" v_esc ≈ {v_esc:.2f} km/s",
