@@ -2,9 +2,9 @@
 
 
 """
-Tests fuer die Collisions-Klasse.
+tests fuer die Collisions-Klasse.
 
-Designprinzip dieser Tests: Jeder Test waehlt seine Werte so, dass ein
+Designprinzip dieser tests: Jeder Test waehlt seine Werte so, dass ein
 Bestehen die ALLGEMEINE Korrektheit der Formel belegt -- nicht nur einen
 guenstigen Einzelfall. Konkret:
   - Positionen/Geschwindigkeiten sind voll 3D (x, y UND z besetzt),

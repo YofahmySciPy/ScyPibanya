@@ -1,4 +1,4 @@
-# Tests for Analysis.py. The min_distance/sweep tests pin down the slow
+# tests for Analysis.py. The min_distance/sweep tests pin down the slow
 # reference functions; TestSweepFast then checks the fast sweep the notebook
 # uses, including that it agrees with the slow one. Speeds m/s, angles deg.
 

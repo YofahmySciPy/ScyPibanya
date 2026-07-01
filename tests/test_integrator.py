@@ -91,9 +91,11 @@ class TestVerletIntegrator(unittest.TestCase):
         # no error should be raised, and nothing should happen
 
     def test_multiple_steps_decrease_distance(self):
+        distance_before = np.linalg.norm(self.bodies[1].position - self.bodies[0].position)
         for i in range(1, 100):
-            integrator.Verlet().step(self.bodies[:2], 3600.0)
-        # after 100 steps, the bodies should have moved significantly towards each other
+            integrator.Verlet().step(self.bodies[:2], 100.0)
+        distance_after = np.linalg.norm(self.bodies[1].position - self.bodies[0].position)
+        self.assertLess(distance_after, distance_before)
 
 
     def test_energy_is_conserved_over_multiple_steps(self):
@@ -109,7 +111,6 @@ class TestVerletIntegrator(unittest.TestCase):
         E_kin_after = sum(b.kinetic_energy() for b in self.bodies[:2])
         E_pot_after = verlet.potential_energy(self.bodies[:2])
         E_total_after = E_kin_after + E_pot_after
-
 
         relative_change = abs(E_total_after - E_total_before) / abs(E_total_before)
         self.assertLess(relative_change, 0.01)

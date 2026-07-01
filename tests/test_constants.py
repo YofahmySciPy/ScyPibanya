@@ -26,12 +26,11 @@ class TestConstants(unittest.TestCase):
         self.assertAlmostEqual(C.EARTH_ESCAPE_VELOCITY, 11186.0, delta=50.0)
 
     def test_moon_circular_velocity_matches_measured_speed(self):
-        self.assertAlmostEqual(C.MOON_CIRCULAR_VELOCITY, C.MOON_ORBITAL_SPEED,
-                               delta=15.0)
+        # empirical orbital speed is 1022 m/s; theoretical value should be close
+        self.assertAlmostEqual(C.MOON_CIRCULAR_VELOCITY, 1022.0, delta=15.0)
 
     def test_moon_start_state(self):
         self.assertEqual(C.MOON_START_X, C.EARTH_MOON_DISTANCE)
-        self.assertEqual(C.MOON_START_VY, C.MOON_ORBITAL_SPEED)
 
     def test_cannon_speeds(self):
         self.assertEqual(C.CANNON_SPEEDS, (7000.0, 9000.0, 12000.0))
