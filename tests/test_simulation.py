@@ -57,11 +57,11 @@ class Test_Simulation_EarthMoon_Verlet(unittest.TestCase):
 class Test_Simulation_Cannon_Euler(unittest.TestCase):
 
     def setUp(self):
-        self.sim = Simulation.build_simulation(cannon=True, duration=1, integrator=Euler(), cannon_angle=0, cannonball_speed=12000) # duration input is days, it will be converted to seconds
+        self.sim = Simulation.build_simulation(cannon=True, duration=1, integrator=Euler(), cannonball_angle=0, cannonball_speed=12000) # duration input is days, it will be converted to seconds
 
     def test_init(self):
         self.assertEqual(self.sim.t, 0.0)
-        self.assertEqual(self.sim.dt, constants.MINUTE) # one step takes one minute
+        self.assertEqual(self.sim.dt, 10 * constants.SECOND) # one step takes 10 seconds
         self.assertEqual(len(self.sim.history), 1)
         self.assertIn("t", self.sim.history[0])
         self.assertIn("bodies", self.sim.history[0])
@@ -79,7 +79,7 @@ class Test_Simulation_Cannon_Euler(unittest.TestCase):
         pos_before = self.sim.bodies[1].position.copy()
         self.sim.step()
         self.assertEqual(len(self.sim.history), 2)
-        self.assertEqual(self.sim.t, constants.MINUTE) # after one minute, one step is passed
+        self.assertEqual(self.sim.t, 10 * constants.SECOND) # after ten seconds, one step is passed
         self.assertIn("t", self.sim.history[1])
         self.assertIn("bodies", self.sim.history[1])
         for body_snapshot in self.sim.history[0]["bodies"]:
@@ -95,7 +95,7 @@ class Test_Simulation_Cannon_Euler(unittest.TestCase):
 
     def test_simulate(self):
         self.sim.simulate()
-        self.assertEqual(len(self.sim.history), 1441) # after one day: 1440 steps(one each minute) + 1 initial step
+        self.assertEqual(len(self.sim.history), 8641) # after one day: 8640 steps(one each ten seconds) + 1 initial step
         self.assertAlmostEqual(self.sim.t, constants.DAY) # one day is passed
 
 class Test_Value_Error(unittest.TestCase):

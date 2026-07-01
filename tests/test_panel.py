@@ -1,8 +1,9 @@
+import os
 import sys
-sys.path.append("src")
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 import unittest
 import ipywidgets as widgets
-from Panel import build_panel
+from panel import build_panel
 
 
 class TestPanel(unittest.TestCase):
@@ -39,7 +40,7 @@ class TestPanel(unittest.TestCase):
         fake_run = MagicMock()
         fake_render = MagicMock()
 
-        with patch("Panel.run", fake_run), patch("Panel.render", fake_render):
+        with patch("panel.run", fake_run), patch("panel.render", fake_render):
             self.refs["start_button"].click()
 
         # run must have been called exactly once
@@ -57,7 +58,7 @@ class TestPanel(unittest.TestCase):
         # run throws an error — except must catch it, kernel must survive
         fake_run = MagicMock(side_effect=ValueError("defect"))
 
-        with patch("Panel.run", fake_run):
+        with patch("panel.run", fake_run):
             # this must not raise — if except works, click() returns normally
             try:
                 self.refs["start_button"].click()

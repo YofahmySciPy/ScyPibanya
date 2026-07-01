@@ -36,17 +36,13 @@ MOON_RADIUS = 1.7374e6
 
 # Orbit of the Moon around Earth (center to center):
 EARTH_MOON_DISTANCE = 3.844e8
-MOON_ORBITAL_SPEED  = 1022.0
 MOON_ORBITAL_PERIOD = 27.322 * 86400.0
-
-
 
 
 # Initial state for the simulation (Earth sits in the origin 0/0/0):
 #   the Moon starts on the +X axis and moves in the +Y direction,
 #   so it orbits inside the X/Y plane
-MOON_START_X  = EARTH_MOON_DISTANCE   # start position on the X axis [m]
-MOON_START_VY = MOON_ORBITAL_SPEED    # start velocity in the Y direction [m/s]
+MOON_START_X = EARTH_MOON_DISTANCE    # start position on the X axis [m]
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +53,7 @@ MOON_START_VY = MOON_ORBITAL_SPEED    # start velocity in the Y direction [m/s]
 EARTH_ESCAPE_VELOCITY = math.sqrt(2.0 * G * EARTH_MASS / EARTH_RADIUS)
 
 # Theoretical circular orbital velocity of the Moon:  v = sqrt(G * M / r)
-# -> approx. 1018 m/s, should match MOON_ORBITAL_SPEED (1022) -> sanity check
+# -> approx. 1018 m/s
 MOON_CIRCULAR_VELOCITY = math.sqrt(G * EARTH_MASS / EARTH_MOON_DISTANCE)
 
 
