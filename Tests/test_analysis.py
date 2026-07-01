@@ -10,11 +10,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import numpy as np
 
-import Constants
-from Analysis import sweep, sweep_fast, min_distance_to_moon
-from Scenarios import create_cannon_shot
-from Simulation import Simulation
-from Integrator import Verlet
+import constants
+from analysis import sweep, sweep_fast, min_distance_to_moon
+from scenarios import create_cannon_shot
+from simulation import Simulation
+from integrator import Verlet
 
 
 # Known hit / miss cells (m/s, deg), checked against the sim.
@@ -43,7 +43,7 @@ class TestMinDistanceToMoon(unittest.TestCase):
         # On a hit the projectile reaches the Moon's surface.
         self.assertLess(md, HIT_DISTANCE_THRESHOLD)
         # Sanity: it really is about the Moon's radius, not a tiny fluke.
-        self.assertGreater(md, Constants.MOON_RADIUS * 0.5)
+        self.assertGreater(md, constants.MOON_RADIUS * 0.5)
 
     def test_miss_run_stays_far_away(self):
         history = _run(MISS_SPEED, MISS_ANGLE)

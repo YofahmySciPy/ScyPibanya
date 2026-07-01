@@ -93,7 +93,6 @@ class TestVerletIntegrator(unittest.TestCase):
     def test_multiple_steps_decrease_distance(self):
         for i in range(1, 100):
             integrator.Verlet().step(self.bodies[:2], 3600.0)
-            print(self.bodies[0].distance_to(self.bodies[1]))
         # after 100 steps, the bodies should have moved significantly towards each other
 
 
@@ -110,7 +109,7 @@ class TestVerletIntegrator(unittest.TestCase):
         E_kin_after = sum(b.kinetic_energy() for b in self.bodies[:2])
         E_pot_after = verlet.potential_energy(self.bodies[:2])
         E_total_after = E_kin_after + E_pot_after
-        print(E_total_before, E_total_after)
+
 
         relative_change = abs(E_total_after - E_total_before) / abs(E_total_before)
         self.assertLess(relative_change, 0.01)
@@ -147,7 +146,6 @@ class TestVerletIntegrator(unittest.TestCase):
             verlet.step(self.bodies[:2], dt=1.0)
 
         for b, start in zip(self.bodies[:2], start_positions):
-            print(b.position, start)
             np.testing.assert_allclose(b.position, start, atol=1e-3)
 
     def test_circular_orbit_returns_to_starting_position(self):

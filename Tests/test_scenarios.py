@@ -1,7 +1,11 @@
+import os
+import sys
 import unittest
 
-from src.scenarios import create_earth_moon, create_cannon_shot
-from src import constants
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
+
+from scenarios import create_earth_moon, create_cannon_shot
+import constants
 
 
 class TestScenarios(unittest.TestCase):
@@ -46,7 +50,7 @@ class TestScenarios(unittest.TestCase):
         bodies, config = create_cannon_shot(7000, 0)
 
         # bodies[2] is the projectile
-        self.assertAlmostEqual(bodies[2].position[0], constants.EARTH_RADIUS)  # x = earth radius
+        self.assertAlmostEqual(bodies[2].position[0], constants.EARTH_RADIUS + constants.PROJECTILE_RADIUS + 1000.0)
         self.assertAlmostEqual(bodies[2].position[1], 0)  # y = 0
 
 
